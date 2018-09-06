@@ -55,7 +55,7 @@ tuple_1 = [(4, 2), (4, 1), (-10, 0)]
 So each tuple in the list represents a different term in the function.  The first element of the tuple is the term's constant and the second element of the tuple is the term's exponent.  Thus $4x^2$ translates to `(4, 2)` and  $-10$ translates to `(-10, 0)` because $-10$ equals $-10*x^0$.  
 > We'll refer to this list of tuples as "list of terms", or `list_of_terms`.
 
-Ok, so give this a shot. Write $ f(x) = 4x^3 + 11x^2 $ as a list of terms.  Assign it to the variable `tuple_2`. (***formerly `four_x_cubed_plus_eleven_x_squared`***)
+Ok, so give this a shot. Write $ f(x) = 4x^3 + 11x^2 $ as a list of terms.  Assign it to the variable `tuple_2`.
 
 
 ```python
@@ -157,7 +157,7 @@ plt.show()
 ```
 
 
-![png](index_files/index_23_0.png)
+    <matplotlib.figure.Figure at 0x11320e160>
 
 
 ### Moving to derivatives of linear functions
