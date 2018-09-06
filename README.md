@@ -169,7 +169,7 @@ Let's start with a function, $f(x) = 4x + 15$.  We represent the function as the
 lin_function = [(4, 1), (15, 0)]
 ```
 
-We can plot the function by calculating outputs at a range of x values.  Note that we use our `output_at` function to calculate the output at each individual x value.
+We can plot the function by calculating outputs at a range of $x$ values.  Note that we use our `output_at` function to calculate the output at each individual $x$ value.
 
 
 ```python
@@ -256,7 +256,7 @@ plt.show()
 
 #### Calculating the derivative
 
-Write a function, `derivative_at` that calculates $\frac{\Delta f}{\Delta x}$ when given a `list_of_terms`, an `x_value` for the value of $(x)$ the derivative is evaluated at, and `delta_x`, which represents $\Delta x$.  
+Write a function, `derivative_at` that calculates $\dfrac{\Delta f}{\Delta x}$ when given a `list_of_terms`, an `x_value` for the value of $(x)$ the derivative is evaluated at, and `delta_x`, which represents $\Delta x$.  
 
 Let's try this for $f(x) = 4x + 15 $.  Round the result to three decimal places.
 
@@ -267,9 +267,11 @@ def derivative_of(list_of_terms, x_value, delta_x):
     return round(delta/delta_x, 3)
 ```
 
+Now let's use this function along with our stored `x_value` and `delta_x`.
+
 
 ```python
-derivative_of(lin_function, 3, 2) # 4.0
+derivative_of(lin_function, x_value=x_value, delta_x=delta_x) # 4.0
 ```
 
 
@@ -281,106 +283,120 @@ derivative_of(lin_function, 3, 2) # 4.0
 
 ### We do: Building more plots
 
-Ok, now that we have written a Python function that allows us to plot our list of terms, we can write a function that called `derivative_trace` that shows the rate of change, or slope, for the function between initial x and initial x plus delta x. We'll walk you through this one.  
+Ok, now that we have written a Python function that allows us to plot our list of terms, we can write a function called `rate_of_change` that outputs the necessary terms to plot the or slope for the function between initial $x$ and $x$ plus $\Delta x$. We'll walk you through this one.  
 
 
 ```python
-def derivative_trace(list_of_terms, x_value, line_length = 4, delta_x = .01):
-    derivative_at = derivative_of(list_of_terms, x_value, delta_x)
+def rate_of_change(list_of_terms, x_value, line_length = 4, delta_x = .01):
     y = output_at(list_of_terms, x_value)
-    x_minus = x_value - line_length/2
-    x_plus = x_value + line_length/2
-    y_minus = y - derivative_at * line_length/2
-    y_plus = y + derivative_at * line_length/2
-    return trace_values([x_minus, x_value, x_plus],[y_minus, y, y_plus], name = "f' (x) = " + str(derivative_at), mode = 'line')
-```
-
-> Our `derivative_trace` function takes as arguments `list_of_terms`, `x_value`, which is where our line should be tangent to our function, `line_length` as the length of our tangent line, and `delta_x` which is our $\Delta x$.
-
-> The return value of `derivative_trace` is a dictionary that represents tangent line at that values of $x$.  It uses the `derivative_of` function you wrote above to calculate the slope of the tangent line.  Once the slope of the tangent is calculated, we stretch out this tangent line by the `line_length` provided.  The beginning x value is just the midpoint minus the `line_length/2` and the ending $x$ value is midpoint plus the `line_length/2`.  Then we calculate our $y$ endpoints by starting at the $y$ along the function, and having them ending at `line_length/2*slope` in either direction. 
-
-
-```python
-tangent_line_four_x_plus_fifteen = derivative_trace(lin_function, 2, line_length = 4, delta_x = .01)
-tangent_line_four_x_plus_fifteen
-```
-
-
-    ---------------------------------------------------------------------------
-
-    NameError                                 Traceback (most recent call last)
-
-    <ipython-input-27-8a91c0590f7e> in <module>()
-    ----> 1 tangent_line_four_x_plus_fifteen = derivative_trace(lin_function, 2, line_length = 4, delta_x = .01)
-          2 tangent_line_four_x_plus_fifteen
-
-
-    <ipython-input-25-0a3baaf75771> in derivative_trace(list_of_terms, x_value, line_length, delta_x)
-          6     y_minus = y - derivative_at * line_length/2
-          7     y_plus = y + derivative_at * line_length/2
-    ----> 8     return trace_values([x_minus, x_value, x_plus],[y_minus, y, y_plus], name = "f' (x) = " + str(derivative_at), mode = 'line')
+    derivative_at = derivative_of(list_of_terms, x_value, delta_x)
     
+    x_dev = np.linspace(x_value - line_length/2, x_value + line_length/2, 50)
+    tan = y + derivative_at *(x_dev - x_value)
+    return {'x_dev':x_dev, 'tan':tan, 'lab': " f' (x) = " + str(derivative_at)}
+```
 
-    NameError: name 'trace_values' is not defined
+> Our `rate_of_change` function takes as arguments `list_of_terms`, `x_value`, which is where our line should be tangent to our function, `line_length` as the length of our tangent line, and `delta_x` which is our $\Delta x$.
 
 
-Now we provide a function that simply returns all three of these traces.
+> The return value of `rate_of_change` is a dictionary that represents the tangent line at that values of $x$. It uses `output_at()` to calculate the function value at a particular $x$ and the `derivative_of()` function you wrote above to calculate the slope of the tangent line. 
+Next, it uses `line_length` along with the `np.linspace` to generate an array of x-values to be used as an input to generate the tangent line `tan`.
+
+Let's look at the output of the `rate_of_change()`, using our `lin_function`,  $x$ equal to 2, $\Delta_x$ equal to 0.1 and `line_length` equal to 2.
 
 
 ```python
-def delta_traces(list_of_terms, x_value, line_length = 4, delta_x = .01):
-    tangent = derivative_trace(list_of_terms, x_value, line_length, delta_x)
-    delta_f_line = delta_f_trace(list_of_terms, x_value, delta_x)
-    delta_x_line = delta_x_trace(list_of_terms, x_value, delta_x)
-    return [tangent, delta_f_line, delta_x_line]
+rate_change = rate_of_change(lin_function, 2, line_length = 2, delta_x = .1)
+rate_change
 ```
 
-Below we can plot our trace of the function as well 
+
+
+
+    {'lab': " f' (x) = 4.0",
+     'tan': array([19.        , 19.16326531, 19.32653061, 19.48979592, 19.65306122,
+            19.81632653, 19.97959184, 20.14285714, 20.30612245, 20.46938776,
+            20.63265306, 20.79591837, 20.95918367, 21.12244898, 21.28571429,
+            21.44897959, 21.6122449 , 21.7755102 , 21.93877551, 22.10204082,
+            22.26530612, 22.42857143, 22.59183673, 22.75510204, 22.91836735,
+            23.08163265, 23.24489796, 23.40816327, 23.57142857, 23.73469388,
+            23.89795918, 24.06122449, 24.2244898 , 24.3877551 , 24.55102041,
+            24.71428571, 24.87755102, 25.04081633, 25.20408163, 25.36734694,
+            25.53061224, 25.69387755, 25.85714286, 26.02040816, 26.18367347,
+            26.34693878, 26.51020408, 26.67346939, 26.83673469, 27.        ]),
+     'x_dev': array([1.        , 1.04081633, 1.08163265, 1.12244898, 1.16326531,
+            1.20408163, 1.24489796, 1.28571429, 1.32653061, 1.36734694,
+            1.40816327, 1.44897959, 1.48979592, 1.53061224, 1.57142857,
+            1.6122449 , 1.65306122, 1.69387755, 1.73469388, 1.7755102 ,
+            1.81632653, 1.85714286, 1.89795918, 1.93877551, 1.97959184,
+            2.02040816, 2.06122449, 2.10204082, 2.14285714, 2.18367347,
+            2.2244898 , 2.26530612, 2.30612245, 2.34693878, 2.3877551 ,
+            2.42857143, 2.46938776, 2.51020408, 2.55102041, 2.59183673,
+            2.63265306, 2.67346939, 2.71428571, 2.75510204, 2.79591837,
+            2.83673469, 2.87755102, 2.91836735, 2.95918367, 3.        ])}
+
+
+
+Now, let's plot our function, $\Delta f$ and $\Delta x$ again along with our `rate_of_change` line.
 
 
 ```python
-delta_x = 1
+fig, ax = plt.subplots(figsize=(10,6))
 
-# derivative_traces(list_of_terms, x_value, line_length = 4, delta_x = .01)
-three_x_plus_tangents = delta_traces(four_x_plus_fifteen, 2, line_length= 2*1, delta_x = delta_x)
-# {'x': [1.5, 2, 2.5], 'y': [2.0, 4, 6.0]}
-plot([four_x_plus_fifteen_trace, *three_x_plus_tangents])
+x_values = np.linspace(0, 5, 100)
+y_values = list(map(lambda x: output_at(lin_function, x), x_values))
 
+plt.plot(x_values, y_values, label = "4x + 15")
+# rate_of_change line
+plt.plot(rate_change['x_dev'], rate_change['tan'], color = "yellow", label = rate_change['lab'])
+
+# delta x
+y_val = output_at(lin_function, x_value)
+hline_lab= 'delta x = ' + str(delta_x)
+plt.hlines(y=y_val, xmin= x_value, xmax= x_value + delta_x, color="lightgreen", label = hline_lab)
+
+# delta f
+y_val_max = output_at(lin_function, x_value + delta_x)
+vline_lab =  'delta f = ' + str(y_val_max-y_val)
+plt.vlines(x = x_value + delta_x , ymin= y_val, ymax=y_val_max, color="darkorange", label = vline_lab)
+ax.legend(loc='upper left', fontsize='large')
+
+plt.show()
 ```
 
 
-<div id="b6206db9-76db-433e-ac02-3292b57ae469" style="height: 525px; width: 100%;" class="plotly-graph-div"></div><script type="text/javascript">require(["plotly"], function(Plotly) { window.PLOTLYENV=window.PLOTLYENV || {};window.PLOTLYENV.BASE_URL="https://plot.ly";Plotly.newPlot("b6206db9-76db-433e-ac02-3292b57ae469", [{"x": [0, 1, 2, 3, 4, 5], "y": [15, 19, 23, 27, 31, 35], "mode": "line", "name": "data", "text": []}, {"x": [1.0, 2, 3.0], "y": [19.0, 23, 27.0], "mode": "line", "name": "f' (x) = 4.0", "text": []}, {"x": [3, 3], "y": [23, 27], "mode": "line", "name": "delta f = 4", "text": []}, {"x": [2, 3], "y": [23, 23], "mode": "line", "name": "delta x = 1", "text": []}], {}, {"showLink": true, "linkText": "Export to plot.ly"})});</script>
+![png](index_files/index_49_0.png)
 
 
-So that function highlights the rate of change is moving at precisely the point x = 2.  Sometimes it is useful to see how the derivative is changing across all x values.  With linear functions we know that our function is always changing by the same rate, and therefore the rate of change is constant.  Let's write a function that allows us to see the function, and the derivative side by side.
+So that function highlights the rate of change is moving at precisely the point $x = 2$. Sometimes it is useful to see how the derivative is changing across all $x$ values.  With linear functions we know that our function is always changing by the same rate, and therefore the rate of change is constant.  Let's write a function that allows us to see the function, and the derivative side by side.
 
 
 ```python
-from graph import make_subplots, trace_values, plot_figure
+fig, ax = plt.subplots(figsize=(10,4))
 
-def function_derivative_compared_trace(list_of_terms, x_values, delta_x):
-    function_values = list(map(lambda x: output_at(list_of_terms, x),x_values))
-    derivative_values = list(map(lambda x: derivative_of(list_of_terms, x, delta_x), x_values))
-    function_trace = trace_values(x_values, function_values, mode = 'line')
-    derivative_trace = trace_values(x_values, derivative_values, mode = 'line')
-    return make_subplots([function_trace], [derivative_trace])
+x_values = np.linspace(0, 5, 100)
+function_values = list(map(lambda x: output_at(lin_function, x),x_values))
+derivative_values = list(map(lambda x: derivative_of(lin_function, x, delta_x), x_values))
 
-comapared_four_x_plut_fifteen = function_derivative_compared_trace(four_x_plus_fifteen, list(range(0, 7)), 1)
+# plot 1
+plt.subplot(121)
+plt.plot(x_values, function_values, label = "f (x)")
+plt.legend(loc="upper left", bbox_to_anchor=[0, 1], ncol=2, fancybox=True)
 
-plot_figure(comapared_four_x_plut_fifteen )
+# plot 2
+plt.subplot(122)
+plt.plot(x_values, derivative_values,color="darkorange", label = "f '(x)")
+plt.legend(loc="upper left");
+
+plt.show()
 ```
 
-    This is the format of your plot grid:
-    [ (1,1) x1,y1 ]  [ (1,2) x2,y2 ]
-    
 
-
-
-<div id="1eb8a058-cb95-427e-854e-bf900bc76b15" style="height: 525px; width: 100%;" class="plotly-graph-div"></div><script type="text/javascript">require(["plotly"], function(Plotly) { window.PLOTLYENV=window.PLOTLYENV || {};window.PLOTLYENV.BASE_URL="https://plot.ly";Plotly.newPlot("1eb8a058-cb95-427e-854e-bf900bc76b15", [{"type": "scatter", "x": [0, 1, 2, 3, 4, 5, 6], "y": [15, 19, 23, 27, 31, 35, 39], "mode": "line", "name": "data", "text": [], "xaxis": "x1", "yaxis": "y1"}, {"type": "scatter", "x": [0, 1, 2, 3, 4, 5, 6], "y": [4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0], "mode": "line", "name": "data", "text": [], "xaxis": "x2", "yaxis": "y2"}], {"xaxis1": {"domain": [0.0, 0.45], "anchor": "y1"}, "yaxis1": {"domain": [0.0, 1.0], "anchor": "x1"}, "xaxis2": {"domain": [0.55, 1.0], "anchor": "y2"}, "yaxis2": {"domain": [0.0, 1.0], "anchor": "x2"}}, {"showLink": true, "linkText": "Export to plot.ly"})});</script>
+![png](index_files/index_51_0.png)
 
 
 ### Summary
 
 In this section, we coded out our function for calculating and plotting the derivative.  We started with seeing how we can represent different types of functions.  Then we moved onto writing the `output_at` function which evaluates a provided function at a value of x.  We calculated `delta_f` by subtracting the output at initial x value from the output at that initial x plus delta x.  After calculating `delta_f`, we moved onto our `derivative_at` function, which simply divided `delta_f` from `delta_x`.  
 
-In the final section, we introduced some new functions, `delta_f_trace` and `delta_x_trace` that plot our deltas on the graph.  Then we introduced the `derivative_trace` function that shows the rate of change, or slope, for the function between initial x and initial x plus delta x.
+In the final section, we plotted out some of our findings. We introduced the `rate_of_change` function to get the slope for a function between an initial $x$, and $x + \Delta x $
