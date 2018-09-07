@@ -59,7 +59,7 @@ Ok, so give this a shot. Write $ f(x) = 4x^3 + 11x^2 $ as a list of terms.  Assi
 
 
 ```python
-tuple_2 = [(4, 3), (11, 2)]
+tuple_2 = None
 ```
 
 #### 2. Evaluating a function at a specific point 
@@ -237,11 +237,11 @@ Now let's use this function along with our stored `x_value` and `delta_x`.
 
 ### We do: Building more plots
 
-Ok, now that we have written a Python function that allows us to plot our list of terms, we can write a function called `rate_of_change` that outputs the necessary terms to plot the or slope for the function between initial $x$ and $x$ plus $\Delta x$. We'll walk you through this one.  
+Ok, now that we have written a Python function that allows us to plot our list of terms, we can write a function called `tangent_line` that outputs the necessary terms to plot the or slope for the function between initial $x$ and $x$ plus $\Delta x$. We'll walk you through this one.  
 
 
 ```python
-def rate_of_change(list_of_terms, x_value, line_length = 4, delta_x = .01):
+def tangent_line(list_of_terms, x_value, line_length = 4, delta_x = .01):
     y = output_at(list_of_terms, x_value)
     derivative_at = derivative_of(list_of_terms, x_value, delta_x)
     
@@ -250,21 +250,21 @@ def rate_of_change(list_of_terms, x_value, line_length = 4, delta_x = .01):
     return {'x_dev':x_dev, 'tan':tan, 'lab': " f' (x) = " + str(derivative_at)}
 ```
 
-> Our `rate_of_change` function takes as arguments `list_of_terms`, `x_value`, which is where our line should be tangent to our function, `line_length` as the length of our tangent line, and `delta_x` which is our $\Delta x$.
+> Our `tangent_line` function takes as arguments `list_of_terms`, `x_value`, which is where our line should be tangent to our function, `line_length` as the length of our tangent line, and `delta_x` which is our $\Delta x$.
 
 
-> The return value of `rate_of_change` is a dictionary that represents the tangent line at that values of $x$. It uses `output_at()` to calculate the function value at a particular $x$ and the `derivative_of()` function you wrote above to calculate the slope of the tangent line. 
+> The return value of `tangent_line` is a dictionary that represents the tangent line at that values of $x$. It uses `output_at()` to calculate the function value at a particular $x$ and the `derivative_of()` function you wrote above to calculate the slope of the tangent line. 
 Next, it uses `line_length` along with the `np.linspace` to generate an array of x-values to be used as an input to generate the tangent line `tan`.
 
-Let's look at the output of the `rate_of_change()`, using our `lin_function`,  $x$ equal to 2, $\Delta_x$ equal to 0.1 and `line_length` equal to 2.
+Let's look at the output of the `tangent_line()`, using our `lin_function`,  $x$ equal to 2, $\Delta_x$ equal to 0.1 and `line_length` equal to 2.
 
 
 ```python
-rate_change = rate_of_change(lin_function, 2, line_length = 2, delta_x = .1)
+rate_change = tangent_line(lin_function, 2, line_length = 2, delta_x = .1)
 rate_change
 ```
 
-Now, let's plot our function, $\Delta f$ and $\Delta x$ again along with our `rate_of_change` line.
+Now, let's plot our function, $\Delta f$ and $\Delta x$ again along with our `tangent_line`.
 
 
 ```python
@@ -274,7 +274,7 @@ x_values = np.linspace(0, 5, 100)
 y_values = list(map(lambda x: output_at(lin_function, x), x_values))
 
 plt.plot(x_values, y_values, label = "4x + 15")
-# rate_of_change line
+# tangent_line
 plt.plot(rate_change['x_dev'], rate_change['tan'], color = "yellow", label = rate_change['lab'])
 
 # delta x
@@ -308,7 +308,7 @@ plt.legend(loc="upper left", bbox_to_anchor=[0, 1], ncol=2, fancybox=True)
 
 # plot 2
 plt.subplot(122)
-plt.plot(x_values, derivative_values,color="darkorange", label = "f '(x)")
+plt.plot(x_values, derivative_values, color="darkorange", label = "f '(x)")
 plt.legend(loc="upper left");
 
 plt.show()
@@ -318,4 +318,4 @@ plt.show()
 
 In this section, we coded out our function for calculating and plotting the derivative.  We started with seeing how we can represent different types of functions.  Then we moved onto writing the `output_at` function which evaluates a provided function at a value of x.  We calculated `delta_f` by subtracting the output at initial x value from the output at that initial x plus delta x.  After calculating `delta_f`, we moved onto our `derivative_at` function, which simply divided `delta_f` from `delta_x`.  
 
-In the final section, we plotted out some of our findings. We introduced the `rate_of_change` function to get the slope for a function between an initial $x$, and $x + \Delta x $
+In the final section, we plotted out some of our findings. We introduced the `tangent_line` function to get the slope for a function between an initial $x$, and $x + \Delta x $
